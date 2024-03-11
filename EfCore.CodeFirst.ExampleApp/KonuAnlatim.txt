@@ -1,0 +1,92 @@
+﻿- Bu projeyi database server ile bağlayınız
+                    --Tools,SqlServer ve Core paketlerini yükleyiniz
+            
+            -DbContext oluşturunuz
+                --DbContext sınıfından miras alıyoruz
+                --OnConfiguring methodonu override ediyoruz
+                --Connection string'imizi Server Explorer'dan alıyoruz !! Database adını değiştirmeyi unutmayınız...!!
+            
+            -Customer.cs sınıfını oluşturunuz
+                --Propertylerini oluştunurunuz 
+                -- Id olmalı, Id otomatik PK olarak oluşur ve Identity olur.
+                --Proplar yazılan sırayla oluşur
+                --Context sınıfında Customer sınıfını Dbset ile tabloyu oluşturuyoruz 
+                    --public DbSet<Customer> Customers { get; set; }
+            --Add-migration "CustomerTableInit" ile ilk migration oluşturuyoruz.
+            --Prop olan Id -> CustomerNumber yaptık ve hata aldık
+                    --Data Annotation ile [Key] yazarak PK özelliğini verdik.
+                    --Data Annotation dışında nasıl yapabilir ? 
+                            -- Fluent api ile yapılabilir
+            --Fluent Api faydaları
+                --Daha okunaklı
+                --Daha işlevsel
+                --Create anında ayağa kalkar, model builder
+                --Data annotation daha sınırlı
+
+            --DbContext'te OnModelCreating oluşturduk 
+                   -- protected override void OnModelCreating(ModelBuilder modelBuilder)
+                         {
+                             base.OnModelCreating(modelBuilder);
+                         }
+
+            --OnModelCreating nedir 
+                    --FluentApi veri tabanı model ayarlarına denir.
+                    --Entitylerimizin migration komutuyla tablo dizaynının nasıl oluşturabileciğimize yarayan bir metoddur.
+                    --Data Annotation'dan sonra en son çalışır
+                    --HasNoKey == [Keyless]
+                    --HasKey == [Key] Anahtar kolonu ister
+                        --modelBuilder.Entity<Customer>().HasKey(c => c.CustomerNumber);
+                    --Identity'yi migration içinden düzenleyebiliriz, Update-database demeden önce yapmalıyız. (10,1) 
+                         --Farklı olarak bu şekilde de kullanılabilir:
+                                -- modelBuilder.Entity<Customer>().Property(c => c.CustomerNumber).UseIdentityColumn(1, 1);
+                    --HasMaxLength() == "nvarchar()"
+                        -- modelBuilder.Entity<Customer>().Property(c => c.Surname).HasMaxLength(10).IsUnicode(false);
+                                --IsUnicode(false) == nchar
+                        --modelBuilder.Entity<Customer>().Property(c => c.Address).HasMaxLength(10).IsFixedLength(true);
+                                --IsFixedLength(true) == char
+                        -- char(5)  IsFixedLength(true).HasMaxLength(5).IsUnicode(false);
+                        --nchar(5)  IsFixedLength(true).HasMaxLength(5).IsUnicode(true);
+                        --varchar(5)      IsFixedLength(false).HasMaxLength(5).IsUnicode(false);
+                        --nvarchar(5)      IsFixedLength(true).HasMaxLength(5).IsUnicode(true);
+                   --IsRequired(false) == null olabilir
+                        --modelBuilder.Entity<Customer>().Property(c => c.Address).IsRequired(false);
+                   --ToTable("") == [Table("")]
+                        --modelBuilder.Entity<Customer>().ToTable("Musteriler");
+            
+            --Order,OrderDetail,Product,Employee,EmployeeInfo sınıfılarını oluşturuyoruz.
+
+            --Navigation Prop kullanarak ilişkiker
+                       --EmployeeInfo ile Employee ilişkisi
+                            
+                               --           public class Employee
+                                        {
+                                            public int Id { get; set; }
+                                            public string Name { get; set; }
+                                            public string Surname { get; set; }
+                                            public string Title { get; set; }
+                                            public EmployeeInfo EmployeeInfo { get; set; }
+                                        }
+
+                               --          public class EmployeeInfo
+                                        {
+                                            public int Id { get; set; }
+                                            public string Email { get; set; }
+                                            public string Phone { get; set; }
+                                            public DateOnly Birthdate { get; set; }
+                                            public int EmployeeId { get; set; }
+                                            public Employee Employee { get; set; }
+                                        }
+                              --  public Employee Employee { get; set; } 
+                                        -- Bu satır bize uniqelik veriyor. 1-1
+
+                      -- DbContext'te Dbsetlerini oluşturuyoruz
+                                --        public DbSet<Employee> Employees {  get; set; }
+                                          public DbSet<EmployeeInfo> EmployeesInfo { get; set; }
+
+            --FluentApi ile Foreign Key olarak bağlama
+                    --                      modelBuilder.Entity<Employee>().HasOne(e => e.EmployeeInfo)
+                                           .WithOne(ei => ei.Employee)
+                                           .HasForeignKey<EmployeeInfo>(ei => ei.Id);
+                    -- Fazladan kolondan kurtulduk, EmployeeInfoId'deki Id hem fk hem pk oldu. 
+
+            -Student, Lesson, Teacher, StudentLesson sınıflarından veritabanı tasarımı yapınız.   
