@@ -23,5 +23,6 @@ namespace EfCore.CodeFirst.ExampleApp.Context.Entities
         public string Email { get; set; }
         public string Phone { get; set; }
         public DateOnly BirthDate {  get; set; }
+        public ICollection<Order> Orders { get; set; }
     }
 }

@@ -14,5 +14,9 @@ namespace EfCore.CodeFirst.ExampleApp.Context.Entities
         public decimal Price { get; set; } 
         public int Stock {  get; set; }
         public bool IsActive {  get; set; }
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
+        public ICollection<OrderDetail> OrderDetails { get; set; }
+        
     }
 }

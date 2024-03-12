@@ -4,6 +4,7 @@ using EfCore.CodeFirst.ExampleApp.Context.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EfCore.CodeFirst.ExampleApp.Migrations
 {
     [DbContext(typeof(ShopDbContext))]
-    partial class ShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240312081515_InsterYapıldı")]
+    partial class InsterYapıldı
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,38 +24,6 @@ namespace EfCore.CodeFirst.ExampleApp.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("EfCore.CodeFirst.ExampleApp.Context.Entities.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("ntext");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(25)")
-                        .IsFixedLength(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Yok",
-                            Name = "Category 1"
-                        });
-                });
 
             modelBuilder.Entity("EfCore.CodeFirst.ExampleApp.Context.Entities.Customer", b =>
                 {
@@ -277,9 +248,6 @@ namespace EfCore.CodeFirst.ExampleApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -299,15 +267,12 @@ namespace EfCore.CodeFirst.ExampleApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.ToTable("Products");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            CategoryId = 1,
                             Description = "Yok",
                             IsActive = true,
                             Name = "Product 1 ",
@@ -317,7 +282,6 @@ namespace EfCore.CodeFirst.ExampleApp.Migrations
                         new
                         {
                             Id = 2,
-                            CategoryId = 1,
                             Description = "Yok",
                             IsActive = true,
                             Name = "Product 2 ",
@@ -327,7 +291,6 @@ namespace EfCore.CodeFirst.ExampleApp.Migrations
                         new
                         {
                             Id = 3,
-                            CategoryId = 1,
                             Description = "Yok",
                             IsActive = true,
                             Name = "Product 3 ",
@@ -427,22 +390,6 @@ namespace EfCore.CodeFirst.ExampleApp.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Shipping");
-                });
-
-            modelBuilder.Entity("EfCore.CodeFirst.ExampleApp.Context.Entities.Product", b =>
-                {
-                    b.HasOne("EfCore.CodeFirst.ExampleApp.Context.Entities.Category", "Category")
-                        .WithMany("Products")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("EfCore.CodeFirst.ExampleApp.Context.Entities.Category", b =>
-                {
-                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("EfCore.CodeFirst.ExampleApp.Context.Entities.Customer", b =>

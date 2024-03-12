@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient.DataClassification;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,5 +14,10 @@ namespace EfCore.CodeFirst.ExampleApp.Context.Entities
         public int CustomerId { get; set; }
         public int EmployeeId {  get; set; }
         public DateTime OrderTime {  get; set; }
+        public Customer Customer { get; set; }
+        public Employee Employee { get; set; }
+        public ICollection<OrderDetail> OrderDetails { get; set; }
+        public OrderShipping? OrderShipping { get; set; }
+
     }
 }

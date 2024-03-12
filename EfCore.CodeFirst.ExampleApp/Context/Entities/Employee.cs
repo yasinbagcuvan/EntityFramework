@@ -14,6 +14,6 @@ namespace EfCore.CodeFirst.ExampleApp.Context.Entities
         public string Surname { get; set; }
         public string Title { get; set; }
         public EmployeeInfo EmployeeInfo { get; set; }
-    
+        public ICollection <Order> Orders { get; set; }
     }
 }
